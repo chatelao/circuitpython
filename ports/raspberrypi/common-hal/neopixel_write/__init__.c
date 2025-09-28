@@ -22,16 +22,13 @@ uint64_t next_start_raw_ticks = 0;
 // longer while waiting for more data.
 const uint16_t neopixel_program[] = {
 // bitloop:
-//   out x 1        side 0 [6]; Drive low. Side-set still takes place before instruction stalls.
-    0x6621,
-//   jmp !x do_zero side 1 [3]; Branch on the bit we shifted out previous delay. Drive high.
-    0x1323,
-// do_one:
-//   jmp  bitloop   side 1 [4]; Continue driving high, for a one (long pulse)
-    0x1400,
+    0x7521, //  0: out    x, 1            side 0 [5] 
+    0x1024, //  1: jmp    !x, do_zero     side 0     
+    0xfb80, //  2: set    pindirs, 0      side 1 [3] 
+// do_one:   
+    0x1c00, //  3: jmp    bitloop         side 1 [4]
 // do_zero:
-//   nop            side 0 [4]; Or drive low, for a zero (short pulse)
-    0xa442
+    0xf481, //  4: set    pindirs, 1      side 0 [4] 
 };
 
 void common_hal_neopixel_write(const digitalio_digitalinout_obj_t *digitalinout, uint8_t *pixels, uint32_t num_bytes) {
