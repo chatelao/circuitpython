@@ -21,14 +21,13 @@ uint64_t next_start_raw_ticks = 0;
 // instructions run per bit. We start with the low period because it can be
 // longer while waiting for more data.
 const uint16_t neopixel_program[] = {
-// bitloop:
-    0x7521, //  0: out    x, 1            side 0 [5] 
-    0x1024, //  1: jmp    !x, do_zero     side 0     
-    0xfb80, //  2: set    pindirs, 0      side 1 [3] 
-// do_one:   
-    0x1c00, //  3: jmp    bitloop         side 1 [4]
-// do_zero:
-    0xf481, //  4: set    pindirs, 1      side 0 [4] 
+    0xf081, //  0: set    pindirs, 1      side 0
+    0x7521, //  1: out    x, 1            side 0 [5]
+    0xf080, //  2: set    pindirs, 0      side 0
+    0x1a26, //  3: jmp    !x, 6           side 1 [2]
+    0xfb80, //  4: set    pindirs, 0      side 1 [3]
+    0x1800, //  5: jmp    0               side 1 
+    0xb442, //  6: nop                    side 0 [4]
 };
 
 void common_hal_neopixel_write(const digitalio_digitalinout_obj_t *digitalinout, uint8_t *pixels, uint32_t num_bytes) {
